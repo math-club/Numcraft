@@ -1,96 +1,128 @@
-#NumCraft 0.3 beta
+#  numcraft.py
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+#  MA 02110-1301, USA.
+#
+#
 
-#Copyright 2021 The ZmaZe
-
-#This program is free software: you can redistribute it and/or modify
-#it under the terms of the GNU General Public License as published by
-#the Free Software Foundation, either version 3 of the License, or
-#(at your option) any later version.
-
-#This program is distributed in the hope that it will be useful,
-#but WITHOUT ANY WARRANTY; without even the implied warranty of
-#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#GNU General Public License for more details.
-
-#You should have received a copy of the GNU General Public License
-#along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-
-
-from random import randint
-from numcraft_class import*
+import random
 import time
 
-def clicker():
-  global diamond,iron,stone
-  randclick=randint(1,100)
 
-  if dimension==0:
-    if randclick<=1:
-      diamond+=1*(1+fortune.get_active())
-      print("Diamond!")
+__version__ = "beta 0.3"
+update_title = "Enchantment update"
 
-    elif randclick<=11 and randclick>1:
-      iron+=2*(1+fortune.get_active())
-      print("Iron!")
 
+class Enchant:
+
+  def __init__(self,
+               cost: int = 10,
+               active: bool = False):
+    self.cost = cost
+    self.is_active = active
+
+  def activate(self):
+    self.is_active = True
+
+  def get_cost(self) -> int:
+    return self.cost
+
+
+def capitalize(string: str) -> str:
+  return string[0].upper() + string[1:]
+
+
+def ore_generation(dimension: int,
+                   fortune):
+  randclick = random.randint(1, 100)
+
+  if dimension == 0:
+    if randclick <= 1:
+      return "diamond", 1*(1 + fortune.is_active)
+    elif 1 < randclick <= 11:
+      return "iron", 2*(1 + fortune.is_active)
     else:
-      stone+=1
-      print("Mining")
+      return "stone", 1
 
 
-def buy(ench):
-  global diamond
-  if ench.get_active():
-    print("Sorry, enchantment already owned")
-  
+def introduction_text() -> str:
+  return ("Numcraft %s %s" % (__version__, update_title) +
+          'Type "help" or "credits" for more information.')
+
+
+
+def buy(ores, ench):
+  if ench.is_active:
+    return "Sorry, enchantment already owned", 0
   else:
-    if diamond<ench.cost:
-      print("Sorry, not enough diamonds")
-    
+    if ores["diamond"] < ench.cost:
+      return "Sorry, not enough diamonds", 0
     else:
       ench.activate()
-      diamond-=ench.cost
-      print("Succesfully applied fortune")
+      return "Succesfully applied fortune", ench.cost
 
 
-def numcraft_play():
-  global diamond,iron,stone
-  diamond,iron,stone=0,0,0
-  
-  global dimension
-  dimension=0
-  
-  global fortune
-  fortune=Enchant(10)
-  
+def mainloop():
+  dimension = 0
+  fortune = Enchant(10)
+
+  player_minerals = {
+    "diamond": 0,
+    "iron": 0,
+    "stone": 0
+  }
+
+
+  print(introduction_text())
+
   while 1:
-    click=input("Click EXE or help: ")
+    cmd = input("> ").strip()
 
-    if click=="help":
-      print("Numcraft beta 0.3")
-      print("Enchanting Update")
+    if cmd == "help":
+      print("Numcraft %s %s" % (__version__, update_title))
 
       print("inv - open your inventory")
       print("ench - list enchantments")
       print("credits - show credits")
+    elif cmd == "inv":
+      for ore, nb in player_minerals.items():
+        print("%s: %s" % (capitalize(ore), nb))
+    elif cmd == "ench":
+      print("fortune", player_minerals["diamond"],
+            "diamonds:", fortune.is_active)
 
-    elif click=="inv":
-      print("Stone: ",stone)
-      print("Diamonds: ",diamond)
-      print("Iron: ",iron)
+      buying = input("Enchant or EXE to pass: ")
 
-    elif click=="credits":
+      if buying == "fortune":
+        message, value = buy(player_minerals, fortune)
+        player_minerals["diamond"] -= value
+
+        print(message)
+    elif cmd == "credits":
       print("NumCraft by The ZmaZe")
       print("GNU General Public License 3")
-
-    elif click=="ench":
-      print("fortune",diamond,"diamonds:",fortune.get_active())
-      buying=input("Enchant or EXE to pass: ")
-
-      if buying=="fortune":
-        buy(fortune)
-
+    elif cmd == "quit":
+      print("Thank for playing")
+      break
     else:
-      clicker()
+      ore, nb = ore_generation(dimension, fortune)
+      player_minerals[ore] += nb
+
+      print("%s !" % capitalize(ore))
+
       time.sleep(0.1)
+
+
+mainloop()
