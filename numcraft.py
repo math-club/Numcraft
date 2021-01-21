@@ -22,7 +22,7 @@ import time
 
 
 __version__ = "beta 0.3"
-update_title = "Enchantment update"
+update_title = "Code update"
 
 
 class Enchant:
@@ -35,9 +35,6 @@ class Enchant:
 
   def activate(self):
     self.is_active = True
-
-  def get_cost(self) -> int:
-    return self.cost
 
 
 def capitalize(string: str) -> str:
@@ -96,11 +93,12 @@ def mainloop():
       print("inv - open your inventory")
       print("ench - list enchantments")
       print("credits - show credits")
+      print("quit - leave game")
     elif cmd == "inv":
       for ore, nb in player_minerals.items():
         print("%s: %s" % (capitalize(ore), nb))
     elif cmd == "ench":
-      print("fortune", player_minerals["diamond"],
+      print("fortune for", fortune.cost,
             "diamonds:", fortune.is_active)
 
       buying = input("Enchant or EXE to pass: ")
@@ -112,9 +110,10 @@ def mainloop():
         print(message)
     elif cmd == "credits":
       print("NumCraft by The ZmaZe")
+      print("Devs:\nTiméo Arnouts\nThe ZmaZe\nLe Grand Mannitout")
       print("GNU General Public License 3")
     elif cmd == "quit":
-      print("Thank for playing")
+      print("Thanks for playing")
       break
     else:
       ore, nb = ore_generation(dimension, fortune)
