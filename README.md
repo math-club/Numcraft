@@ -21,10 +21,7 @@ Launch the main python file using python3
 
 ## Launch
 
-Now that you imported it in python3 console just type:
-```python
-numcraft()
-```
+Just launch the main file
 
 ## Coded with
 
@@ -32,13 +29,14 @@ numcraft()
 
 ## Versions
 
-Latest: **In dev**
+Latest: **In dev** 0.x
 
-Versions: [Click to show](https://github.com/The-ZmaZe/NumCraft/tags)
+Versions: [Click to show](https://github.com/club-de-maths/Numcraft/tags)
 
-## Auteurs
+## Authors
 
 * **The ZmaZe** _alias_ [@the-zmaze](https://github.com/The-ZmaZe)
+* **Timéo Arnouts** _alias_ [@tim-ats-d](https://github.com/Tim-ats-d)
 
 [Contributors](https://github.com/The-ZmaZe/NumCraft/contributors)
 
