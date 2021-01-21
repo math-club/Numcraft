@@ -25,6 +25,7 @@ Just launch the main file
 
 ## Coded with
 
+* [Geany](http://geany.org) - IDE
 * [Omega IDE](http://getomega.dev/ide) - IDE for Numworks
 
 ## Versions
