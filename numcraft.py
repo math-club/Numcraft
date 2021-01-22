@@ -72,9 +72,8 @@ def ore_generation(dimension: int,
 
 
 def introduction_text() -> str:
-  return (game_name,"%s %s" % (__version__, update_title) +
+  return ("%s %s %s. " % (game_name,__version__, update_title) +
           'Type "help" or "credits" for more information.')
-
 
 
 def buy(ores, ench):
@@ -88,6 +87,26 @@ def buy(ores, ench):
       return "Succesfully applied fortune", ench.cost
 
 
+def cmd_help():
+  return str("%s %s %s\n" % (game_name,__version__, update_title) +
+    "inv - open your inventory\n" +
+    "ench - list enchantments\n" +
+    "credits - show credits\n" +
+    "quit - leave game")
+
+def cmd_credits():
+  pass
+
+def cmd_quit():
+  
+
+def cmd_inv():
+  pass
+
+def cmd_enchant():
+  pass
+
+
 def mainloop():
   dimension = 0
   fortune = Enchantment(10)
@@ -98,48 +117,56 @@ def mainloop():
     "stone": 0
   }
 
+  cmds = {
+    "help": cmd_help(),
+    "credits": cmd_credits(),
+    "quit": cmd_quit(),
+    "inv": cmd_inv(),
+    "ench": cmd_enchant()
+  }
 
   print(introduction_text())
 
   while 1:
     cmd = input("> ").strip()
 
-    if cmd == "help":
-      print("%s %s %s" % (game_name,__version__, update_title))
+    print(cmds[cmd])
+    # ~ if cmd == "help":
+      # ~ print("%s %s %s" % (game_name,__version__, update_title))
 
-      print("inv - open your inventory")
-      print("ench - list enchantments")
-      print("credits - show credits")
-      print("quit - leave game")
-    elif cmd == "inv":
-      for ore, nb in player_minerals.items():
-        print("%s: %s" % (capitalize(ore), nb))
-    elif cmd == "ench":
-      print("fortune for", fortune.cost,
-            "diamonds:", fortune.is_active)
+      # ~ print("inv - open your inventory")
+      # ~ print("ench - list enchantments")
+      # ~ print("credits - show credits")
+      # ~ print("quit - leave game")
+    # ~ elif cmd == "inv":
+      # ~ for ore, nb in player_minerals.items():
+        # ~ print("%s: %s" % (capitalize(ore), nb))
+    # ~ elif cmd == "ench":
+      # ~ print("fortune for", fortune.cost,
+            # ~ "diamonds:", fortune.is_active)
 
-      buying = input("Enchant or EXE to pass: ")
+      # ~ buying = input("Enchant or EXE to pass: ")
 
-      if buying == "fortune":
-        message, value = buy(player_minerals, fortune)
-        player_minerals["diamond"] -= value
+      # ~ if buying == "fortune":
+        # ~ message, value = buy(player_minerals, fortune)
+        # ~ player_minerals["diamond"] -= value
 
-        print(message)
-    elif cmd == "credits":
-      print("%s by %s" % (game_name,work_team))
-      print("Devs:")
-      for name in __author__: print(" - %s" % (name))
-      print("Game Designers:")
-      for name in game_designers: print(" - %s" % (name))
-      print(__license__)
-    elif cmd == "quit":
-      print(quit_message)
-      break
-    else:
-      ore, nb = ore_generation(dimension, fortune)
-      player_minerals[ore] += nb
+        # ~ print(message)
+    # ~ elif cmd == "credits":
+      # ~ print("%s by %s" % (game_name,work_team))
+      # ~ print("Devs:")
+      # ~ for name in __author__: print(" - %s" % (name))
+      # ~ print("Game Designers:")
+      # ~ for name in game_designers: print(" - %s" % (name))
+      # ~ print(__license__)
+    # ~ elif cmd == "quit":
+      # ~ print(quit_message)
+      # ~ break
+    # ~ else:
+      # ~ ore, nb = ore_generation(dimension, fortune)
+      # ~ player_minerals[ore] += nb
 
-      print("%s !" % capitalize(ore))
+      # ~ print("%s !" % capitalize(ore))
 
 
 mainloop()
