@@ -56,8 +56,8 @@ def capitalize(string: str) -> str:
   return string[0].upper() + string[1:]
 
 
-def ore_generation(dimension: int,
-                   fortune):
+def generate_ore(dimension: int,
+                 fortune):
   randclick = random.randint(1, 100)
 
   if dimension == 0:
@@ -99,12 +99,6 @@ def buy(ores, ench):
       ench.activate()
       return "Succesfully applied fortune", ench.cost
 
-def cmd_inv():
-  pass
-
-def cmd_enchant():
-  pass
-
 
 def mainloop():
   dimension = 0
@@ -135,16 +129,14 @@ def mainloop():
 
     if cmd in indications:
       print(indications[cmd]())
-    else:
+    elif cmd in commands:
       commands.get(cmd, lambda : None)()
+    else:
+      ore, nb = generate_ore(dimension, fortune)
+      player_minerals[ore] += nb
 
-    # ~ if cmd == "help":
-      # ~ print("%s %s %s" % (game_name,__version__, update_title))
+      print("%s !" % capitalize(ore))
 
-      # ~ print("inv - open your inventory")
-      # ~ print("ench - list enchantments")
-      # ~ print("credits - show credits")
-      # ~ print("quit - leave game")
     # ~ elif cmd == "inv":
       # ~ for ore, nb in player_minerals.items():
         # ~ print("%s: %s" % (capitalize(ore), nb))
@@ -159,21 +151,6 @@ def mainloop():
         # ~ player_minerals["diamond"] -= value
 
         # ~ print(message)
-    # ~ elif cmd == "credits":
-      # ~ print("%s by %s" % (game_name,work_team))
-      # ~ print("Devs:")
-      # ~ for name in __author__: print(" - %s" % (name))
-      # ~ print("Game Designers:")
-      # ~ for name in game_designers: print(" - %s" % (name))
-      # ~ print(__license__)
-    # ~ elif cmd == "quit":
-      # ~ print(quit_message)
-      # ~ break
-    # ~ else:
-      # ~ ore, nb = ore_generation(dimension, fortune)
-      # ~ player_minerals[ore] += nb
-
-      # ~ print("%s !" % capitalize(ore))
 
 
 mainloop()
