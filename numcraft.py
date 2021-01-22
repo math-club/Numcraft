@@ -49,44 +49,56 @@ class Player:
   def __init__(self,
                name: str):
     self.name = name
+    self.current_dimension = 0
 
+    self.inventory = {
+      "minerals": {"diamond": 0,
+                   "iron": 0,
+                   "stone": 0}
+    }
+    self.enchantments = []
+
+  def get_inventory(self) -> dict:
+    return self.inventory
+
+  def get_enchantments(self) -> list:
+    return self.enchantments
+
+
+class Indication:
+
+  def intro() -> str:
+    return ("%s %s %s. \n" % (game_name,__version__, update_name) +
+            'Type "help" or "credits" for more information.')
+
+  def help() -> str:
+    """show this message"""
+    return ("%s %s %s\n\n" % (game_name,__version__, update_name) +
+            "\n".join("%s - %s" % ("todo", "todo")))
+
+  def credits() -> str:
+    """show credits"""
+    return "Authors : %s" % ", ".join(__author__)
+
+  def quit() -> str:
+    """leave game"""
+    return "Thanks for playing"
 
 
 def capitalize(string: str) -> str:
   return string[0].upper() + string[1:]
 
 
-def generate_ore(dimension: int,
-                 fortune):
+def generate_ore(player):
   randclick = random.randint(1, 100)
 
-  if dimension == 0:
+  if player.current_dimension == 0:
     if randclick <= 1:
-      return "diamond", 1*(1 + fortune.is_active)
+      return "diamond", 1*(1 + ("fortune" in player.enchantments))
     elif 1 < randclick <= 11:
-      return "iron", 2*(1 + fortune.is_active)
+      return "iron", 2*(1 + ("fortune" in player.enchantments))
     else:
       return "stone", 1
-
-
-class Indication:
-
-  def intro() -> str:
-    return ("%s %s %s. " % (game_name,__version__, update_name) +
-            'Type "help" or "credits" for more information.')
-
-  def help() -> str:
-    return ("%s %s %s\n" % (game_name,__version__, update_name) +
-            "inv - open your inventory\n"
-            "ench - list enchantments\n"
-            "credits - show credits\n"
-            "quit - leave game")
-
-  def credits() -> str:
-    return "Authors : %s" % ", ".join(__author__)
-
-  def quit() -> str:
-    return "Thanks for playing"
 
 
 def buy(ores, ench):
@@ -101,22 +113,20 @@ def buy(ores, ench):
 
 
 def mainloop():
-  dimension = 0
   fortune = Enchantment(10)
 
-  player_minerals = {
-    "diamond": 0,
-    "iron": 0,
-    "stone": 0
-  }
+  gamer = Player("Steve")
 
   commands = {
+    "inv": Player.get_inventory,
+    "ench": Player.get_enchantments
+  }
+
+  indications = {
     "intro": Indication.intro,
     "help": Indication.help,
     "credits": Indication.credits,
     "quit": Indication.quit,
-    "inv": Player.inventory,
-    "ench": Player.enchantments
   }
 
   print(Indication.intro())
@@ -125,10 +135,12 @@ def mainloop():
     cmd = input("> ").strip()
 
     if cmd in commands:
-      commands[cmd]()
+      commands[cmd](gamer)
+    elif cmd in indications:
+      print(indications[cmd]())
     else:
-      ore, nb = generate_ore(dimension, fortune)
-      player_minerals[ore] += nb
+      ore, nb = generate_ore(gamer)
+      gamer.inventory["minerals"][ore] += nb
 
       print("%s !" % capitalize(ore))
 
