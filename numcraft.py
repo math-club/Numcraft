@@ -44,6 +44,14 @@ class Enchantment:
     self.is_active = True
 
 
+class Player:
+
+  def __init__(self,
+               name: str):
+    self.name = name
+
+
+
 def capitalize(string: str) -> str:
   return string[0].upper() + string[1:]
 
@@ -61,25 +69,24 @@ def ore_generation(dimension: int,
       return "stone", 1
 
 
-def intro_text() -> str:
-  return ("%s %s %s. " % (game_name,__version__, update_title) +
-          'Type "help" or "credits" for more information.')
+class Indication:
 
+  def intro() -> str:
+    return ("%s %s %s. " % (game_name,__version__, update_name) +
+            'Type "help" or "credits" for more information.')
 
-def help_text() -> str:
-  return ("%s %s %s\n" % (game_name,__version__, update_title) +
-          "inv - open your inventory\n"
-          "ench - list enchantments\n"
-          "credits - show credits\n"
-          "quit - leave game")
+  def help() -> str:
+    return ("%s %s %s\n" % (game_name,__version__, update_name) +
+            "inv - open your inventory\n"
+            "ench - list enchantments\n"
+            "credits - show credits\n"
+            "quit - leave game")
 
+  def credits() -> str:
+    return "Authors : %s" % ", ".join(__author__)
 
-def credits_text() -> str:
-  return "Authors : %s" % ", ".join(__author__)
-
-
-def quit_text() -> str:
-  return "Thanks for playing"
+  def quit() -> str:
+    return "Thanks for playing"
 
 
 def buy(ores, ench):
@@ -91,8 +98,6 @@ def buy(ores, ench):
     else:
       ench.activate()
       return "Succesfully applied fortune", ench.cost
-
-
 
 def cmd_inv():
   pass
@@ -112,19 +117,26 @@ def mainloop():
   }
 
   commands = {
-    "help": cmd_help,
-    "credits": cmd_credits,
-    "quit": cmd_quit,
     "inv": cmd_inv,
     "ench": cmd_enchant
   }
 
-  print(introduction_text())
+  indications = {
+    "intro": Indication.intro,
+    "help": Indication.help,
+    "credits": Indication.credits,
+    "quit": Indication.quit
+  }
+
+  print(Indication.intro())
 
   while 1:
     cmd = input("> ").strip()
 
-    commands.get(cmd)()
+    if cmd in indications:
+      print(indications[cmd]())
+    else:
+      commands.get(cmd, lambda : None)()
 
     # ~ if cmd == "help":
       # ~ print("%s %s %s" % (game_name,__version__, update_title))
