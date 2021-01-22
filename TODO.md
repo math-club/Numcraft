@@ -1,5 +1,7 @@
 # NumCraft - TODO
 
+French and English accepted here
+
 ## Code
 
 Handler for commands
