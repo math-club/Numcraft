@@ -1,5 +1,7 @@
 #  numcraft.py
 #
+#  Copyright 2021 Nathan Duranel, Timéo Arnouts
+#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 2 of the License, or
@@ -17,15 +19,30 @@
 #
 #
 
-import random
-import time
-
-
 __version__ = "beta 0.3"
+__author__ = [
+  "Nathan Duranel",
+  "Timéo Arnouts"
+]
+__license__ = "GNU General Public License 3"
+
+
+import random
+
+
+game_name = "Numcraft"
 update_title = "Code update"
+quit_message = "Thanks for playing"
+
+work_team = "BG de NSI"
+game_designers = [
+  "Paul Boëté",
+  "Nathan Duranel",
+  "Timéo Arnouts"
+]
 
 
-class Enchant:
+class Enchantment:
 
   def __init__(self,
                cost: int = 10,
@@ -55,7 +72,7 @@ def ore_generation(dimension: int,
 
 
 def introduction_text() -> str:
-  return ("Numcraft %s %s" % (__version__, update_title) +
+  return (game_name,"%s %s" % (__version__, update_title) +
           'Type "help" or "credits" for more information.')
 
 
@@ -73,7 +90,7 @@ def buy(ores, ench):
 
 def mainloop():
   dimension = 0
-  fortune = Enchant(10)
+  fortune = Enchantment(10)
 
   player_minerals = {
     "diamond": 0,
@@ -88,7 +105,7 @@ def mainloop():
     cmd = input("> ").strip()
 
     if cmd == "help":
-      print("Numcraft %s %s" % (__version__, update_title))
+      print("%s %s %s" % (game_name,__version__, update_title))
 
       print("inv - open your inventory")
       print("ench - list enchantments")
@@ -109,19 +126,20 @@ def mainloop():
 
         print(message)
     elif cmd == "credits":
-      print("NumCraft by The ZmaZe")
-      print("Devs:\nTiméo Arnouts\nThe ZmaZe\nLe Grand Mannitout")
-      print("GNU General Public License 3")
+      print("%s by %s" % (game_name,work_team))
+      print("Devs:")
+      for name in __author__: print(" - %s" % (name))
+      print("Game Designers:")
+      for name in game_designers: print(" - %s" % (name))
+      print(__license__)
     elif cmd == "quit":
-      print("Thanks for playing")
+      print(quit_message)
       break
     else:
       ore, nb = ore_generation(dimension, fortune)
       player_minerals[ore] += nb
 
       print("%s !" % capitalize(ore))
-
-      time.sleep(0.1)
 
 
 mainloop()
