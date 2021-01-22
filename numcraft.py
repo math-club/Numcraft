@@ -18,28 +18,18 @@
 #  MA 02110-1301, USA.
 #
 #
-
 __version__ = "beta 0.3"
 __author__ = [
   "Nathan Duranel",
   "Timéo Arnouts"
 ]
-__license__ = "GNU General Public License 3"
 
 
 import random
 
 
 game_name = "Numcraft"
-update_title = "Code update"
-quit_message = "Thanks for playing"
-
-work_team = "BG de NSI"
-game_designers = [
-  "Paul Boëté",
-  "Nathan Duranel",
-  "Timéo Arnouts"
-]
+update_name = "Code update"
 
 
 class Enchantment:
@@ -71,9 +61,25 @@ def ore_generation(dimension: int,
       return "stone", 1
 
 
-def introduction_text() -> str:
+def intro_text() -> str:
   return ("%s %s %s. " % (game_name,__version__, update_title) +
           'Type "help" or "credits" for more information.')
+
+
+def help_text() -> str:
+  return ("%s %s %s\n" % (game_name,__version__, update_title) +
+          "inv - open your inventory\n"
+          "ench - list enchantments\n"
+          "credits - show credits\n"
+          "quit - leave game")
+
+
+def credits_text() -> str:
+  return "Authors : %s" % ", ".join(__author__)
+
+
+def quit_text() -> str:
+  return "Thanks for playing"
 
 
 def buy(ores, ench):
@@ -87,18 +93,6 @@ def buy(ores, ench):
       return "Succesfully applied fortune", ench.cost
 
 
-def cmd_help():
-  return str("%s %s %s\n" % (game_name,__version__, update_title) +
-    "inv - open your inventory\n" +
-    "ench - list enchantments\n" +
-    "credits - show credits\n" +
-    "quit - leave game")
-
-def cmd_credits():
-  pass
-
-def cmd_quit():
-  
 
 def cmd_inv():
   pass
@@ -117,12 +111,12 @@ def mainloop():
     "stone": 0
   }
 
-  cmds = {
-    "help": cmd_help(),
-    "credits": cmd_credits(),
-    "quit": cmd_quit(),
-    "inv": cmd_inv(),
-    "ench": cmd_enchant()
+  commands = {
+    "help": cmd_help,
+    "credits": cmd_credits,
+    "quit": cmd_quit,
+    "inv": cmd_inv,
+    "ench": cmd_enchant
   }
 
   print(introduction_text())
@@ -130,7 +124,8 @@ def mainloop():
   while 1:
     cmd = input("> ").strip()
 
-    print(cmds[cmd])
+    commands.get(cmd)()
+
     # ~ if cmd == "help":
       # ~ print("%s %s %s" % (game_name,__version__, update_title))
 
