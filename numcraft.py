@@ -111,15 +111,12 @@ def mainloop():
   }
 
   commands = {
-    "inv": cmd_inv,
-    "ench": cmd_enchant
-  }
-
-  indications = {
     "intro": Indication.intro,
     "help": Indication.help,
     "credits": Indication.credits,
-    "quit": Indication.quit
+    "quit": Indication.quit,
+    "inv": Player.inventory,
+    "ench": Player.enchantments
   }
 
   print(Indication.intro())
@@ -127,10 +124,8 @@ def mainloop():
   while 1:
     cmd = input("> ").strip()
 
-    if cmd in indications:
-      print(indications[cmd]())
-    elif cmd in commands:
-      commands.get(cmd, lambda : None)()
+    if cmd in commands:
+      commands[cmd]()
     else:
       ore, nb = generate_ore(dimension, fortune)
       player_minerals[ore] += nb
