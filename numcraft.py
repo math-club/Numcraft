@@ -30,13 +30,22 @@ import random
 
 game_name = "Numcraft"
 update_name = "Code update"
-splash_text = [
-  "Also try Minecraft!"
-  "Coding UTF-8!"
-  "GG!"
-  "The answer is 42"
-  "Also try Archess_btw!"
-]
+
+
+def capitalize(string: str) -> str:
+  return string[0].upper() + string[1:]
+  
+
+def weight_choice(choices_list: list, weight: list):
+  if len(choices_list) == len(weight):
+    weighted=[]
+    for i in range(len(choices_list)):
+      weighted += list(choices_list[i] for x in range(weight[i]))
+
+    return random.choice(weighted)
+  else:
+      raise ValueError("In Function: weight_choices() - len(choices_list) and len(weight) must be equals ")
+
 
 class Enchantment:
 
@@ -64,8 +73,10 @@ class Player:
     }
     self.enchantments = []
 
-  def get_inventory(self) -> dict:
-    return self.inventory
+  def get_inventory(self) -> str:
+    return "\n".join("%s: %s" % (capitalize(ore), nb)
+                     for ore, nb in self.inventory["minerals"].items())
+
 
   def get_enchantments(self) -> list:
     return self.enchantments
@@ -80,6 +91,20 @@ class Indication:
     return ("%s %s %s. \n" % (game_name,__version__, update_name) +
             'Type "help" or "credits" for more information.')
 
+  def salutation(player) -> str:
+    return "Hi %s." % player.name
+
+  def quotes() -> str:
+    splash_text = (
+      "Also try Minecraft!",
+      "Coding UTF-8!",
+      "GG!",
+      "The answer is 42",
+      "Also try Archess_btw!"
+    )
+
+    return "\t" + random.choice(splash_text)
+    
   def help(player) -> str:
     """show this message"""
     return ("%s %s %s\n\n" % (game_name,__version__, update_name) +
@@ -92,27 +117,6 @@ class Indication:
   def quit(player) -> str:
     """leave game"""
     return "Thanks for playing"
-  
-  def inv(player) ->str:
-    """show inventory"""
-    return ("%s's Inventory" % (player.get_name))
-
-  def quotes():
-    return random.choice(splash_text)
-    
-
-
-def capitalize(string: str) -> str:
-  return string[0].upper() + string[1:]
-
-
-def weight_choice(choices_list: list,weight: list):
-  if len(choices_list)==len(weight):
-    weighted=[]
-    for i in range(len(choices_list)):
-      weighted += list(choices_list[i] for x in range(weight[i]))
-    return choice(weighted)
-  else: raise ValueError("In Function: weight_choices() - len(choices_list) and len(weight) must be equals ")
 
 
 def generate_ore(player):
@@ -135,62 +139,56 @@ def buy(ores, ench):
       return "Sorry, not enough diamonds", 0
     else:
       ench.activate()
+
       return "Succesfully applied fortune", ench.cost
 
 
 def mainloop():
-  fortune = Enchantment(10)
-
-  loop_index = 1
-
   commands = {
     "inv": Player.get_inventory,
     "ench": Player.get_enchantments
   }
 
   indications = {
-    "intro": Indication.intro,
-    "quote": Indication.quotes,
     "help": Indication.help,
     "credits": Indication.credits,
     "quit": Indication.quit,
-    "inv": Indication.inv
   }
+  
+  fortune = Enchantment(10)
 
   print(Indication.intro())
-  print(Indication.quotes())
+  print(Indication.quotes() + "\n")
+
+  gamer = Player(input("Choose a name: "))
+  
+  print(Indication.salutation(gamer))
 
   while 1:
-    
-    if loop_index == 1:
-      gamer = Player(input("Choose a name: "))
-
     cmd = input("> ").strip()
 
     if cmd in commands:
-      commands[cmd](gamer)
-    if cmd in indications:
+      print(commands[cmd](gamer))
+    elif cmd in indications:
       print(indications[cmd](gamer))
     else:
       ore, nb = generate_ore(gamer)
       gamer.inventory["minerals"][ore] += nb
 
-      print("%s !" % capitalize(ore))
-    loop_index += 1
-    # ~ elif cmd == "inv":
-      # ~ for ore, nb in player_minerals.items():
-        # ~ print("%s: %s" % (capitalize(ore), nb))
-    # ~ elif cmd == "ench":
-      # ~ print("fortune for", fortune.cost,
-            # ~ "diamonds:", fortune.is_active)
+      print(capitalize(ore) + "!")
 
-      # ~ buying = input("Enchant or EXE to pass: ")
+    """
+    elif cmd == "ench":
+      print("fortune for", fortune.cost,
+            "diamonds:", fortune.is_active)
 
-      # ~ if buying == "fortune":
-        # ~ message, value = buy(player_minerals, fortune)
-        # ~ player_minerals["diamond"] -= value
+      buying = input("Enchant or EXE to pass: ")
 
-        # ~ print(message)
+      if buying == "fortune":
+        message, value = buy(player_minerals, fortune)
+        player_minerals["diamond"] -= value
 
+        print(message)
+    """ 
 
 mainloop()
