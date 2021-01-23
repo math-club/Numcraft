@@ -64,6 +64,9 @@ class Player:
   def get_enchantments(self) -> list:
     return self.enchantments
 
+  def get_name(self) -> str:
+    return self.name
+
 
 class Indication:
 
@@ -83,6 +86,12 @@ class Indication:
   def quit() -> str:
     """leave game"""
     return "Thanks for playing"
+  
+  def inv(player) ->str:
+    """show inventory"""
+    return ("%s's Inventory" % (player.get_name) + 
+            "%s" % "\n ".join(player.get_inventory))
+    
 
 
 def capitalize(string: str) -> str:
@@ -124,7 +133,7 @@ def buy(ores, ench):
 def mainloop():
   fortune = Enchantment(10)
 
-  gamer = Player("Steve")
+  loop_index = 1
 
   commands = {
     "inv": Player.get_inventory,
@@ -136,11 +145,16 @@ def mainloop():
     "help": Indication.help,
     "credits": Indication.credits,
     "quit": Indication.quit,
+    "inv": Indication.inv
   }
 
   print(Indication.intro())
 
   while 1:
+    
+    if loop_index == 1:
+      gamer = Player(input("Choose a name: "))
+
     cmd = input("> ").strip()
 
     if cmd in commands:
@@ -152,7 +166,7 @@ def mainloop():
       gamer.inventory["minerals"][ore] += nb
 
       print("%s !" % capitalize(ore))
-
+    loop_index += 1
     # ~ elif cmd == "inv":
       # ~ for ore, nb in player_minerals.items():
         # ~ print("%s: %s" % (capitalize(ore), nb))
