@@ -89,11 +89,13 @@ def capitalize(string: str) -> str:
   return string[0].upper() + string[1:]
 
 
-def weight_choice(alist,weight):
-  weighted=[]
-  for i in range(len(alist)):
-    weighted += list(alist[i] for x in range(weight[i]))
-  return choice(weighted)
+def weight_choice(choices_list: list,weight: list):
+  if len(choices_list)==len(weight):
+    weighted=[]
+    for i in range(len(choices_list)):
+      weighted += list(choices_list[i] for x in range(weight[i]))
+    return choice(weighted)
+  else: raise ValueError("In Function: weight_choices() - len(choices_list) and len(weight) must be equals ")
 
 
 def generate_ore(player):
