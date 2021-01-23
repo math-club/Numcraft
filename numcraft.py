@@ -89,6 +89,13 @@ def capitalize(string: str) -> str:
   return string[0].upper() + string[1:]
 
 
+def weight_choice(alist,weight):
+  weighted=[]
+  for i in range(len(alist)):
+    weighted += list(alist[i] for x in range(weight[i]))
+  return choice(weighted)
+
+
 def generate_ore(player):
   randclick = random.randint(1, 100)
 
