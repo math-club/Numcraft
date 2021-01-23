@@ -7,7 +7,7 @@ French and English accepted here
 Handler for commands - Under Dev
 
 class player - Under Dev
--> dict with registered characters? + var current_player? -> cmd to choose the current character
+->  var current_player? -> cmd to choose the current character
 
 ## Game Design
 
