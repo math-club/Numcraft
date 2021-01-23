@@ -1,4 +1,6 @@
-# NumCraft
+
+
+![NumCraft](/home/the_zmaze/Documents/Codage/python/Projects/MineText/NumCraft.png)
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](http://forthebadge.com)
 
