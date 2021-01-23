@@ -80,26 +80,25 @@ class Indication:
     return ("%s %s %s. \n" % (game_name,__version__, update_name) +
             'Type "help" or "credits" for more information.')
 
-  def help() -> str:
+  def help(player) -> str:
     """show this message"""
     return ("%s %s %s\n\n" % (game_name,__version__, update_name) +
             "\n".join("%s - %s" % ("todo", "todo")))
 
-  def credits() -> str:
+  def credits(player) -> str:
     """show credits"""
     return "Authors : %s" % ", ".join(__author__)
 
-  def quit() -> str:
+  def quit(player) -> str:
     """leave game"""
     return "Thanks for playing"
   
   def inv(player) ->str:
     """show inventory"""
-    return ("%s's Inventory" % (player.get_name) + 
-            "%s" % "\n ".join(player.get_inventory))
+    return ("%s's Inventory" % (player.get_name))
 
   def quotes():
-    return choice(splash_text)
+    return random.choice(splash_text)
     
 
 
@@ -170,8 +169,8 @@ def mainloop():
 
     if cmd in commands:
       commands[cmd](gamer)
-    elif cmd in indications:
-      print(indications[cmd]())
+    if cmd in indications:
+      print(indications[cmd](gamer))
     else:
       ore, nb = generate_ore(gamer)
       gamer.inventory["minerals"][ore] += nb
