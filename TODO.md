@@ -4,9 +4,10 @@ French and English accepted here
 
 ## Code
 
-Handler for commands
+Handler for commands - Under Dev
 
-class player
+class player - Under Dev
+-> dict with registered characters? + var current_player?
 
 ## Game Design
 
