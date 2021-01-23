@@ -30,7 +30,13 @@ import random
 
 game_name = "Numcraft"
 update_name = "Code update"
-
+splash_text = [
+  "Also try Minecraft!"
+  "Coding UTF-8!"
+  "GG!"
+  "The answer is 42"
+  "Also try Archess_btw!"
+]
 
 class Enchantment:
 
@@ -91,6 +97,9 @@ class Indication:
     """show inventory"""
     return ("%s's Inventory" % (player.get_name) + 
             "%s" % "\n ".join(player.get_inventory))
+
+  def quotes():
+    return choice(splash_text)
     
 
 
@@ -142,6 +151,7 @@ def mainloop():
 
   indications = {
     "intro": Indication.intro,
+    "quote": Indication.quotes,
     "help": Indication.help,
     "credits": Indication.credits,
     "quit": Indication.quit,
@@ -149,6 +159,7 @@ def mainloop():
   }
 
   print(Indication.intro())
+  print(Indication.quotes())
 
   while 1:
     
