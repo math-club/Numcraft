@@ -18,7 +18,7 @@
 #  MA 02110-1301, USA.
 #
 #
-__version__ = "beta 0.3"
+__version__ = "beta 0.4"
 __author__ = [
   "Nathan Duranel",
   "Timéo Arnouts"
@@ -41,10 +41,10 @@ def weight_choice(choices_list: list, weight: list):
     weighted=[]
     for i in range(len(choices_list)):
       weighted += list(choices_list[i] for x in range(weight[i]))
-
     return random.choice(weighted)
   else:
-      raise ValueError("In Function: weight_choices() - len(choices_list) and len(weight) must be equals ")
+      raise ValueError("In Function: weight_choices() - " +
+                    "len(choices_list) and len(weight) must be equals")
 
 
 class Enchantment:
@@ -104,7 +104,7 @@ class Indication:
     )
 
     return "\t" + random.choice(splash_text)
-    
+
   def help(player) -> str:
     """show this message"""
     return ("%s %s %s\n\n" % (game_name,__version__, update_name) +
@@ -120,15 +120,10 @@ class Indication:
 
 
 def generate_ore(player):
-  randclick = random.randint(1, 100)
-
   if player.current_dimension == 0:
-    if randclick <= 1:
-      return "diamond", 1*(1 + ("fortune" in player.enchantments))
-    elif 1 < randclick <= 11:
-      return "iron", 2*(1 + ("fortune" in player.enchantments))
-    else:
-      return "stone", 1
+    ore = weight_choice(list(
+      ore for ore,x in player.inventory["minerals"].items()),[1,10,89])
+  return ore,1      #TODO - Add support for fortune
 
 
 def buy(ores, ench):
