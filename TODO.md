@@ -7,13 +7,13 @@ French and English accepted here
 Handler for commands - Under Dev
 
 class player - Under Dev
-->  var current_player? -> cmd to choose the current character
+->  var current_player? -> cmd to choose the current character -> SAVE
 
 ## Game Design
 
-Y level
+Y level ?
 
-Lava Pool - Too dangerous if u spam click?
+-> Lava Pool ?
 
 Way to get wood
 
