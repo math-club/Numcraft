@@ -43,8 +43,8 @@ def weight_choice(choices_list: list, weight: list):
       weighted += list(choices_list[i] for x in range(weight[i]))
     return random.choice(weighted)
   else:
-      raise ValueError("In Function: weight_choices() - " +
-                    "len(choices_list) and len(weight) must be equals")
+      raise ValueError(("In Function: weight_choices() - "
+                    "len(choices_list) and len(weight) must be equals"))
 
 
 class Player:
