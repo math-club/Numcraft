@@ -47,18 +47,6 @@ def weight_choice(choices_list: list, weight: list):
                     "len(choices_list) and len(weight) must be equals")
 
 
-class Enchantment:
-
-  def __init__(self,
-               cost: int = 10,
-               active: bool = False):
-    self.cost = cost
-    self.is_active = active
-
-  def activate(self):
-    self.is_active = True
-
-
 class Player:
 
   def __init__(self,
@@ -119,11 +107,13 @@ class Indication:
     return "Thanks for playing"
 
 
-def generate_ore(player):
+def generate_ore(player,enchantment):
   if player.current_dimension == 0:
     ore = weight_choice(list(
       ore for ore,x in player.inventory["minerals"].items()),[1,10,89])
-  return ore,1      #TODO - Add support for fortune
+    nb = 1
+    if enchantment["fortune"] in player.get_enchantments: nb = nb*2
+  return ore,nb
 
 
 def buy(ores, ench):
@@ -150,7 +140,9 @@ def mainloop():
     "quit": Indication.quit,
   }
   
-  fortune = Enchantment(10)
+  enchantment = {
+    "fortune": 10
+  }
 
   print(Indication.intro())
   print(Indication.quotes() + "\n")
@@ -167,23 +159,9 @@ def mainloop():
     elif cmd in indications:
       print(indications[cmd](gamer))
     else:
-      ore, nb = generate_ore(gamer)
+      ore, nb = generate_ore(gamer,enchantment)
       gamer.inventory["minerals"][ore] += nb
 
       print(capitalize(ore) + "!")
-
-    """
-    elif cmd == "ench":
-      print("fortune for", fortune.cost,
-            "diamonds:", fortune.is_active)
-
-      buying = input("Enchant or EXE to pass: ")
-
-      if buying == "fortune":
-        message, value = buy(player_minerals, fortune)
-        player_minerals["diamond"] -= value
-
-        print(message)
-    """ 
 
 mainloop()
