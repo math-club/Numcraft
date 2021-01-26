@@ -73,6 +73,12 @@ class Player:
     return self.name
 
 
+class Commands:
+
+  def ench(enchantments_list) -> tuple:
+    return ("\n" .join(enchantments_list.items()))
+
+
 class Indication:
 
   def intro() -> str:
@@ -112,33 +118,30 @@ def generate_ore(player,enchantment):
     ore,values = weight_choice(list(
       (ore,values) for ore,values in player.inventory["minerals"].items()),[1,10,89])
     nb = values[1]
-    if enchantment["fortune"] in player.get_enchantments():
+    if "fortune" in player.get_enchantments():
       nb *= weight_choice([2,3,4],[60,30,10])
   return ore,nb
 
 
-def buy(ores, ench):
-  if ench.is_active:
+def buy(player,enchantments_list, enchantment_buy):
+  if enchantment_buy in player.get_enchantments():
     return "Sorry, enchantment already owned", 0
+  elif player.inventory["minerals"]["diamond"][0] < enchantments_list[enchantment_buy]:
+    return "Sorry, not enough diamonds", 0
   else:
-    if ores["diamond"] < ench.cost:
-      return "Sorry, not enough diamonds", 0
-    else:
-      ench.activate()
-
-      return "Succesfully applied fortune", ench.cost
+    return "Succesfully applied fortune", enchantments_list[enchantment_buy]
 
 
 def mainloop():
   commands = {
-    "inv": Player.get_inventory,
-    "ench": Player.get_enchantments
+    "ench": Commands.ench,
   }
 
   indications = {
     "help": Indication.help,
     "credits": Indication.credits,
     "quit": Indication.quit,
+    "inv": Player.get_inventory,
   }
   
   enchantment = {
@@ -156,7 +159,7 @@ def mainloop():
     cmd = input("> ").strip()
 
     if cmd in commands:
-      print(commands[cmd](gamer))
+      print(commands[cmd](gamer,enchantment))
     elif cmd in indications:
       print(indications[cmd](gamer))
     else:
