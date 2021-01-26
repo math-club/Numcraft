@@ -55,14 +55,14 @@ class Player:
     self.current_dimension = 0
 
     self.inventory = {
-      "minerals": {"diamond": 0,
-                   "iron": 0,
-                   "stone": 0}
+      "minerals": {"diamond": [0,1],
+                   "iron": [0,2],
+                   "stone": [0,1]}
     }
     self.enchantments = []
 
   def get_inventory(self) -> str:
-    return "\n".join("%s: %s" % (capitalize(ore), nb)
+    return "\n".join("%s: %s" % (capitalize(ore), nb[0])
                      for ore, nb in self.inventory["minerals"].items())
 
 
@@ -109,10 +109,11 @@ class Indication:
 
 def generate_ore(player,enchantment):
   if player.current_dimension == 0:
-    ore = weight_choice(list(
-      ore for ore,x in player.inventory["minerals"].items()),[1,10,89])
-    nb = 1
-    if enchantment["fortune"] in player.get_enchantments: nb = nb*2
+    ore,values = weight_choice(list(
+      (ore,values) for ore,values in player.inventory["minerals"].items()),[1,10,89])
+    nb = values[1]
+    if enchantment["fortune"] in player.get_enchantments():
+      nb *= random.randint(2,3)
   return ore,nb
 
 
@@ -160,7 +161,7 @@ def mainloop():
       print(indications[cmd](gamer))
     else:
       ore, nb = generate_ore(gamer,enchantment)
-      gamer.inventory["minerals"][ore] += nb
+      gamer.inventory["minerals"][ore][0] += nb
 
       print(capitalize(ore) + "!")
 
