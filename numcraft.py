@@ -113,7 +113,7 @@ def generate_ore(player,enchantment):
       (ore,values) for ore,values in player.inventory["minerals"].items()),[1,10,89])
     nb = values[1]
     if enchantment["fortune"] in player.get_enchantments():
-      nb *= random.randint(2,3)
+      nb *= weight_choice([2,3,4],[60,30,10])
   return ore,nb
 
 
