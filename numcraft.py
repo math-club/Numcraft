@@ -46,6 +46,15 @@ def weight_choice(choices_list: list, weight: list):
       raise ValueError(("In Function: weight_choices() - "
                     "len(choices_list) and len(weight) must be equals"))
 
+class Error(Exception):
+  """NumCraft's exceptions"""
+  pass
+
+class Quit(Error):
+  """Raised to quit NumCraft"""
+  def __init__(self, message) -> None:
+      self.message = message
+
 
 class Player:
 
@@ -65,18 +74,45 @@ class Player:
     return "\n".join("%s: %s" % (capitalize(ore), nb[0])
                      for ore, nb in self.inventory["minerals"].items())
 
+  def add_enchantments(self,enchants:list):
+    for i in enchants:
+      if i in self.enchantments:
+        raise ValueError
+    self.enchantments += enchants
 
   def get_enchantments(self) -> list:
     return self.enchantments
 
-  def get_name(self) -> str:
-    return self.name
-
 
 class Commands:
 
-  def ench(enchantments_list) -> tuple:
-    return ("\n" .join(enchantments_list.items()))
+  def ench(player,objects) -> str:
+    """Randomly choose an enchantment to apply
+      Cost 10 diamonds
+      If the enchantment is already applied, it takes 1 diamond anyway"""
+    cost = 10
+    rand_ench,trash = weight_choice(list(objects["enchantment"].items()),[10])
+    if player.inventory["minerals"]["diamond"][0] < cost:
+      return "Sorry, not enough diamonds"
+    try:
+      player.add_enchantments([rand_ench])
+      player.inventory["minerals"]["diamond"][0] += -10
+      return "Applied %s!" % (rand_ench)
+    except ValueError:
+      player.inventory["minerals"]["diamond"][0] += -1
+      return ("Sorry, %s already own!\n" % (rand_ench) +
+        "Maybe you'll get another next time!")
+
+  def quit(player,objects) -> str:
+    """leave game"""
+    raise  Quit("Thanks for playing, %s." % (player.name))
+
+  def god(player,objects) -> str:
+    """give the player enough minerals"""
+    player.inventory["minerals"]["diamond"][0] = 42042
+    player.inventory["minerals"]["iron"][0] = 42042
+    player.inventory["minerals"]["stone"][0] = 42042
+    return "Inventory fulled"
 
 
 class Indication:
@@ -103,17 +139,15 @@ class Indication:
     """show this message"""
     return ("%s %s %s\n\n" % (game_name,__version__, update_name) +
             "\n".join("%s - %s" % ("todo", "todo")))
-
+    print(gamer.inventory["minerals"].items())
   def credits(player) -> str:
     """show credits"""
     return "Authors : %s" % ", ".join(__author__)
 
-  def quit(player) -> str:
-    """leave game"""
-    return "Thanks for playing"
+  
 
 
-def generate_ore(player,enchantment):
+def generate_ore(player):
   if player.current_dimension == 0:
     ore,values = weight_choice(list(
       (ore,values) for ore,values in player.inventory["minerals"].items()),[1,10,89])
@@ -123,31 +157,22 @@ def generate_ore(player,enchantment):
   return ore,nb
 
 
-def buy(player,enchantments_list, enchantment_buy):
-  if enchantment_buy in player.get_enchantments():
-    return "Sorry, enchantment already owned", 0
-  elif player.inventory["minerals"]["diamond"][0] < enchantments_list[enchantment_buy]:
-    return "Sorry, not enough diamonds", 0
-  else:
-    return "Succesfully applied fortune", enchantments_list[enchantment_buy]
-
-
 def mainloop():
   commands = {
     "ench": Commands.ench,
+    "quit": Commands.quit,
+    "god": Commands.god,
   }
 
   indications = {
     "help": Indication.help,
     "credits": Indication.credits,
-    "quit": Indication.quit,
     "inv": Player.get_inventory,
   }
   
-  enchantment = {
-    "fortune": 10
+  objects = {
+    "enchantment": {"fortune",}
   }
-
   print(Indication.intro())
   print(Indication.quotes() + "\n")
 
@@ -159,11 +184,11 @@ def mainloop():
     cmd = input("> ").strip()
 
     if cmd in commands:
-      print(commands[cmd](gamer,enchantment))
+      print(commands[cmd](gamer,objects))
     elif cmd in indications:
       print(indications[cmd](gamer))
     else:
-      ore, nb = generate_ore(gamer,enchantment)
+      ore, nb = generate_ore(gamer)
       gamer.inventory["minerals"][ore][0] += nb
 
       print(capitalize(ore) + "!")
