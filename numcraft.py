@@ -64,9 +64,9 @@ class Player:
     self.current_dimension = 0
 
     self.inventory = {
-      "minerals": {"diamond": [0,1],
-                   "iron": [0,2],
-                   "stone": [0,1]}
+      "minerals": {"diamond": [0, 1],
+                   "iron": [0, 2],
+                   "stone": [0, 1]}
     }
     self.enchantments = []
 
@@ -74,7 +74,7 @@ class Player:
     return "\n".join("%s: %s" % (capitalize(ore), nb[0])
                      for ore, nb in self.inventory["minerals"].items())
 
-  def add_enchantments(self,enchants:list):
+  def add_enchantments(self, enchants:list):
     for i in enchants:
       if i in self.enchantments:
         raise ValueError
@@ -98,21 +98,24 @@ class Commands:
     try:
       player.add_enchantments([rand_ench])
       player.inventory["minerals"]["diamond"][0] -= cost
+      
       return "Applied %s!" % (rand_ench)
     except ValueError:
       player.inventory["minerals"]["diamond"][0] -= min_cost
-      return ("Sorry, %s already own!\n" % (rand_ench) +
-        "Maybe you'll get another next time!")
+      
+      return ("Sorry, %s already own!\n" % rand_ench
+              + "Maybe you'll get another next time!")
 
   def quit(player,ressources) -> str:
     """leave game"""
-    raise  Quit("Thanks for playing, %s." % (player.name))
+    raise Quit("Thanks for playing, %s." % (player.name))
 
   def god(player,ressources) -> str:
     """give the player enough minerals"""
     player.inventory["minerals"]["diamond"][0] = 42042
     player.inventory["minerals"]["iron"][0] = 42042
     player.inventory["minerals"]["stone"][0] = 42042
+
     return "Inventory fulled"
 
 
