@@ -34,7 +34,7 @@ update_name = "Code update"
 
 def capitalize(string: str) -> str:
   return string[0].upper() + string[1:]
-  
+
 
 def weight_choice(choices_list: list, weight: list):
   if len(choices_list) == len(weight):
