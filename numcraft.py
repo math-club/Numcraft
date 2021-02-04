@@ -86,28 +86,29 @@ class Player:
 
 class Commands:
 
-  def ench(player,objects) -> str:
+  def ench(player,ressources) -> str:
     """Randomly choose an enchantment to apply
       Cost 10 diamonds
       If the enchantment is already applied, it takes 1 diamond anyway"""
     cost = 10
-    rand_ench,trash = weight_choice(list(objects["enchantment"].items()),[10])
+    min_cost = 1
+    rand_ench = weight_choice(list(ressources["enchantment"]),[10])
     if player.inventory["minerals"]["diamond"][0] < cost:
       return "Sorry, not enough diamonds"
     try:
       player.add_enchantments([rand_ench])
-      player.inventory["minerals"]["diamond"][0] += -10
+      player.inventory["minerals"]["diamond"][0] -= cost
       return "Applied %s!" % (rand_ench)
     except ValueError:
-      player.inventory["minerals"]["diamond"][0] += -1
+      player.inventory["minerals"]["diamond"][0] -= min_cost
       return ("Sorry, %s already own!\n" % (rand_ench) +
         "Maybe you'll get another next time!")
 
-  def quit(player,objects) -> str:
+  def quit(player,ressources) -> str:
     """leave game"""
     raise  Quit("Thanks for playing, %s." % (player.name))
 
-  def god(player,objects) -> str:
+  def god(player,ressources) -> str:
     """give the player enough minerals"""
     player.inventory["minerals"]["diamond"][0] = 42042
     player.inventory["minerals"]["iron"][0] = 42042
@@ -139,12 +140,11 @@ class Indication:
     """show this message"""
     return ("%s %s %s\n\n" % (game_name,__version__, update_name) +
             "\n".join("%s - %s" % ("todo", "todo")))
-    print(gamer.inventory["minerals"].items())
+
   def credits(player) -> str:
     """show credits"""
     return "Authors : %s" % ", ".join(__author__)
 
-  
 
 
 def generate_ore(player):
@@ -170,26 +170,26 @@ def mainloop():
     "inv": Player.get_inventory,
   }
   
-  objects = {
+  ressources = {
     "enchantment": {"fortune",}
   }
   print(Indication.intro())
   print(Indication.quotes() + "\n")
 
-  gamer = Player(input("Choose a name: "))
+  player = Player(input("Choose a name: "))
   
-  print(Indication.salutation(gamer))
+  print(Indication.salutation(player))
 
   while 1:
     cmd = input("> ").strip()
 
     if cmd in commands:
-      print(commands[cmd](gamer,objects))
+      print(commands[cmd](player,ressources))
     elif cmd in indications:
-      print(indications[cmd](gamer))
+      print(indications[cmd](player))
     else:
-      ore, nb = generate_ore(gamer)
-      gamer.inventory["minerals"][ore][0] += nb
+      ore, nb = generate_ore(player)
+      player.inventory["minerals"][ore][0] += nb
 
       print(capitalize(ore) + "!")
 
