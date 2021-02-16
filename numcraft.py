@@ -62,6 +62,7 @@ class Player:
                name: str):
     self.name = name
     self.current_dimension = 0
+    self.y_level = "mine"
 
     self.inventory = {
       "minerals": {"diamond": [0, 1],
@@ -79,10 +80,6 @@ class Player:
       if i in self.enchantments:
         raise ValueError
     self.enchantments += enchants
-
-  def get_enchantments(self) -> list:
-    return self.enchantments
-
 
 class Commands:
 
@@ -150,12 +147,13 @@ class Indication:
 
 
 
-def generate_ore(player):
+def generate_ore(player,y_levels):
   if player.current_dimension == 0:
+    weight = y_levels[player.y_level]
     ore,values = weight_choice(list(
       (ore,values) for ore,values in player.inventory["minerals"].items()),[1,10,89])
     nb = values[1]
-    if "fortune" in player.get_enchantments():
+    if "fortune" in player.enchantments:
       nb *= weight_choice([2,3,4],[60,30,10])
   return ore,nb
 
@@ -176,6 +174,13 @@ def mainloop():
   ressources = {
     "enchantment": {"fortune",}
   }
+
+  y_levels = {
+    "surface": [0,0,20],
+    "caves": [1,15,84],
+    "mine": [1,10,89]
+  }
+
   print(Indication.intro())
   print(Indication.quotes() + "\n")
 
@@ -191,7 +196,7 @@ def mainloop():
     elif cmd in indications:
       print(indications[cmd](player))
     else:
-      ore, nb = generate_ore(player)
+      ore, nb = generate_ore(player,y_levels)
       player.inventory["minerals"][ore][0] += nb
 
       print(capitalize(ore) + "!")
