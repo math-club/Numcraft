@@ -18,7 +18,7 @@
 #  MA 02110-1301, USA.
 #
 #
-__version__ = "beta 0.4"
+__version__ = "beta 0.5"
 __author__ = [
   "Nathan Duranel",
   "Timéo Arnouts"
@@ -46,15 +46,10 @@ def weight_choice(choices_list: list, weight: list):
       raise ValueError(("In Function: weight_choices() - "
                     "len(choices_list) and len(weight) must be equals"))
 
-class Error(Exception):
-  """NumCraft's exceptions"""
-  pass
-
-class Quit(Error):
+class Quit(Exception):
   """Raised to quit NumCraft"""
   def __init__(self, message) -> None:
       self.message = message
-
 
 class Player:
 
