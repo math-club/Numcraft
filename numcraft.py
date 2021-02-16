@@ -48,7 +48,12 @@ def weight_choice(choices_list: list, weight: list):
 
 class Quit(Exception):
   """Raised to quit NumCraft"""
-  def __init__(self, message) -> None:
+  def __init__(self, message: str):
+      self.message = message
+
+class EnchantError(Exception):
+  """Raised if the enchantment to apply is already applied"""
+  def __init__(self, message: str = "Enchantment already applied"):
       self.message = message
 
 class Player:
@@ -62,7 +67,9 @@ class Player:
     self.inventory = {
       "minerals": {"diamond": [0, 1],
                    "iron": [0, 2],
-                   "stone": [0, 1]}
+                   "stone": [0, 1]},
+      "surface_ressources": {"wood": [0,1],
+                             "dirt": [0,1]}
     }
     self.enchantments = []
 
@@ -73,7 +80,7 @@ class Player:
   def add_enchantments(self, enchants:list):
     for i in enchants:
       if i in self.enchantments:
-        raise ValueError
+        raise EnchantError
     self.enchantments += enchants
 
 class Commands:
@@ -90,11 +97,10 @@ class Commands:
     try:
       player.add_enchantments([rand_ench])
       player.inventory["minerals"]["diamond"][0] -= cost
-      
       return "Applied %s!" % (rand_ench)
-    except ValueError:
+    except EnchantError:
       player.inventory["minerals"]["diamond"][0] -= min_cost
-      
+
       return ("Sorry, %s already own!\n" % rand_ench
               + "Maybe you'll get another next time!")
 
@@ -144,12 +150,20 @@ class Indication:
 
 def generate_ore(player,y_levels):
   if player.current_dimension == 0:
-    weight = y_levels[player.y_level]
-    ore,values = weight_choice(list(
-      (ore,values) for ore,values in player.inventory["minerals"].items()),[1,10,89])
-    nb = values[1]
-    if "fortune" in player.enchantments:
-      nb *= weight_choice([2,3,4],[60,30,10])
+    if player.y_level == "mine":
+      weight = y_levels[player.y_level]
+      ore,values = weight_choice(list(
+        (ore,values) for ore,values in player.inventory["minerals"].items()),
+          weight)
+      nb = values[1]
+      if "fortune" in player.enchantments:
+        nb *= weight_choice([2,3,4],[60,30,10])
+    if player.y_level == "surface":
+      weight = y_levels[player.y_level]
+      ore,values = weight_choice(list(
+        (ore,values) for ore,values in player.inventory["minerals"].items()),
+          weight)
+      nb = values[1]
   return ore,nb
 
 
@@ -171,7 +185,7 @@ def mainloop():
   }
 
   y_levels = {
-    "surface": [0,0,20],
+    "surface": [20,80],
     "caves": [1,15,84],
     "mine": [1,10,89]
   }
