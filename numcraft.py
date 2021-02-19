@@ -35,6 +35,11 @@ update_name = "Code update"
 def capitalize(string: str) -> str:
   return string[0].upper() + string[1:]
 
+def list_to_str(list_of_str: list) -> str:
+  string = ""
+  for element in list_of_str:
+    string += element
+  return string
 
 def weight_choice(choices_list: list, weight: list):
   if len(choices_list) == len(weight):
@@ -56,11 +61,18 @@ class EnchantError(Exception):
   def __init__(self, message: str = "Enchantment already applied"):
       self.message = message
 
+class PlayerError(Exception):
+  """Raised when a player name is unvalidated"""
+  def __init__(self, message: str = "Player name unvalidated"):
+      self.message = message
+
 class Player:
 
   def __init__(self,
-               name: str):
+               name: str,
+               id: str):
     self.name = name
+    self.id = id
     self.current_dimension = 0
     self.y_level = "mine"
 
@@ -146,6 +158,34 @@ class Indication:
     """show credits"""
     return "Authors : %s" % ", ".join(__author__)
 
+  def player_infos(player) -> str:
+    """show some infos about current player"""
+    infos = ("Name: %s" % (player.name),
+             "ID: %s" % (player.id))
+    return "Player infos:\n %s" % "\n".join(infos)
+
+
+def generate_id() -> str:
+  """Generate a new player ID wich isn't already used"""
+  with open("id_list.numcraft","r") as id_list_file:
+    id_list = ["id0"] + id_list_file.readline().split(" ")
+  with open("id_list.numcraft","w") as id_list_file:
+    player_id = "id0"
+    while player_id in id_list:
+      player_id = list_to_str(list(random.choice(["a","b","c","d","e","f"])
+        for i in range(8)))
+    id_list += [player_id]
+    print(id_list)
+    id_list_file.write(" " .join(id_list[1:]))
+  return player_id
+
+def validate_player(name) -> str:
+  """Validate a name and return an ID"""
+  for character in name:
+    if character == ' ':
+      raise PlayerError("No spaces in player name")
+  player_id = generate_id()
+  return player_id
 
 
 def generate_ore(player,y_levels):
@@ -178,6 +218,7 @@ def mainloop():
     "help": Indication.help,
     "credits": Indication.credits,
     "inv": Player.get_inventory,
+    "player": Indication.player_infos,
   }
   
   ressources = {
@@ -190,11 +231,21 @@ def mainloop():
     "mine": [1,10,89]
   }
 
+  player_defined = False
+
   print(Indication.intro())
   print(Indication.quotes() + "\n")
 
-  player = Player(input("Choose a name: "))
-  
+  while not player_defined:
+    try:
+      player_name = input("Choose a name: ")
+      player_id = validate_player(player_name)
+      player_defined = True
+    except PlayerError as player_error:
+      print(player_error.args[0])
+
+  player = Player(player_name,player_id)
+
   print(Indication.salutation(player))
 
   while 1:
