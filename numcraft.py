@@ -29,7 +29,7 @@ import random
 
 
 game_name = "Numcraft"
-update_name = "Code update"
+update_name = "BETA"
 
 help_docs = [("help","show help for commands"),
              ("credits","show credits"),
