@@ -317,7 +317,7 @@ def mainloop():
     player_id = 0
     file_exist = 0
     while not verify_id(player_id) or not file_exist:
-      player_id = input("Enter ID")
+      player_id = input("Enter ID ")
       if not verify_id(player_id):
         print("Unrecognized ID")
       try:
