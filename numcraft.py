@@ -18,7 +18,7 @@
 #  MA 02110-1301, USA.
 #
 #
-__version__ = "1.0"
+__version__ = "beta 0.6"
 __author__ = [
   "Nathan Duranel",
   "Timéo Arnouts"
