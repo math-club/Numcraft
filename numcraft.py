@@ -18,7 +18,7 @@
 #  MA 02110-1301, USA.
 #
 #
-__version__ = "beta 0.5"
+__version__ = "1.0"
 __author__ = [
   "Nathan Duranel",
   "Timéo Arnouts"
@@ -30,6 +30,17 @@ import random
 
 game_name = "Numcraft"
 update_name = "Code update"
+
+help_docs = [("help","show help for commands"),
+             ("credits","show credits"),
+             ("inv","show inventory"),
+             ("player","show infos about current player"),
+             ("players","show saved players list"),
+             ("ench","buy random enchantment for 10 diamonds"),
+             ("quit","quit game"),
+             ("god","full inventory"),
+             ("save","save current player"),
+]
 
 
 def capitalize(string: str) -> str:
@@ -136,9 +147,7 @@ class Commands:
     """
     save current player
     File reading:
-    line1 - player.name
-    line2 - player.id
-    line3 - player.current_dimension
+    line1 - player.name"todo", "todo"dimension
     line4 - player.y_level
     line5 - player.inventory
     line6 - player.enchantments
@@ -177,7 +186,8 @@ class Indication:
   def help(player) -> str:
     """show help for commands"""
     return ("%s %s %s\n\n" % (game_name,__version__, update_name) +
-            "\n".join("%s - %s" % ("todo", "todo")))
+            "\n".join(list("%s - %s" % (command,doc)
+              for command,doc in help_docs)))
 
   def credits(player) -> str:
     """show credits"""
