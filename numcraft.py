@@ -25,7 +25,7 @@ __author__ = [
 ]
 
 
-from os import POSIX_FADV_NORMAL
+from os import POSIX_FADV_NORMAL, read
 import random
 
 
@@ -63,8 +63,13 @@ class EnchantError(Exception):
       self.message = message
 
 class PlayerError(Exception):
-  """Raised when a player name is unvalidated"""
+  """Raised when a player name or ID is unvalidated"""
   def __init__(self, message: str = "Player name unvalidated"):
+      self.message = message
+
+class MainChoiceError(Exception):
+  """Raised when main_choice is unvalidated (development purpose)"""
+  def __init__(self, message: str = "Error: main_choice unvalidated"):
       self.message = message
 
 class Player:
@@ -221,6 +226,28 @@ def validate_player(name) -> str:
   player_id = generate_id(name)
   return player_id
 
+def verify_id(player_id) -> bool:
+  with open("id_list.numcraft","r") as id_file:
+    id_name_list = id_file.readline().split(" ")
+    id_list = list(id_name.split("=")[0] for id_name in id_name_list)
+  return player_id in id_list
+
+def read_save(player_id) -> Player:
+  """Read save file and create the player"""
+  if not verify_id(player_id):
+    raise PlayerError("ID unrecognized")
+  with open("%s.save.numcraft" % (player_id),"r") as save_file:
+    if not save_file.readable():
+      return "Save file corrupted"
+    player_name = save_file.readline().rstrip("\n")
+    player_id = save_file.readline().rstrip("\n")
+    player = Player(player_name,player_id)
+    player.current_dimension = eval(save_file.readline().rstrip("\n"))
+    player.y_level = save_file.readline().rstrip("\n")
+    player.inventory = eval(save_file.readline().rstrip("\n"))
+    player.enchantments = eval(save_file.readline().rstrip("\n"))
+  return player
+
 def generate_ore(player,y_levels):
   if player.current_dimension == 0:
     if player.y_level == "mine":
@@ -266,20 +293,43 @@ def mainloop():
     "mine": [1,10,89]
   }
 
-  player_defined = False
+  player_defined = 0
 
   print(Indication.intro())
   print(Indication.quotes() + "\n")
 
-  while not player_defined:
-    try:
-      player_name = input("Choose a name: ")
-      player_id = validate_player(player_name)
-      player_defined = True
-    except PlayerError as player_error:
-      print(player_error.args[0])
+  main_choice = 0
+  while not (main_choice == "n" or main_choice == "c"):
+    main_choice = input("n: New Player c: Charge Player [n/c]: ")
 
-  player = Player(player_name,player_id)
+  if main_choice == "n":
+    while not player_defined:
+      try:
+        player_name = input("Choose a name: ")
+        player_id = validate_player(player_name)
+        player_defined = 1
+      except PlayerError as player_error:
+        print(player_error.args[0])
+    player = Player(player_name,player_id)
+
+  elif main_choice == "c":
+    print(Indication.players_list(None))
+    player_id = 0
+    file_exist = 0
+    while not verify_id(player_id) or not file_exist:
+      player_id = input("Enter ID")
+      if not verify_id(player_id):
+        print("Unrecognized ID")
+      try:
+        open("%s.save.numcraft" % (player_id),"r")
+      except FileNotFoundError:
+        print("Save file not saved, deleted or bad-named")
+      else:
+        file_exist = 1
+    player = read_save(player_id)
+
+  else:
+    raise MainChoiceError()
 
   print(Indication.salutation(player))
 
