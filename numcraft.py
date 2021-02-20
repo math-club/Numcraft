@@ -25,6 +25,7 @@ __author__ = [
 ]
 
 
+from os import POSIX_FADV_NORMAL
 import random
 
 
@@ -162,29 +163,42 @@ class Indication:
     """show some infos about current player"""
     infos = ("Name: %s" % (player.name),
              "ID: %s" % (player.id))
-    return "Player infos:\n %s" % "\n".join(infos)
+    return "Player infos:\n%s" % "\n".join(infos)
+
+  def players_list(player) -> str:
+    """show list of players played"""
+    with open("id_list.numcraft","r") as id_file:
+      id_name_list = id_file.readline().split(" ")
+      id_name_list = list(id_name.split("=") for id_name in id_name_list)
+      format_id_name_list = []
+      for id_name in id_name_list:
+        format_id_name_list += [" = " .join(id_name)]
+    return ("Players list:" +
+            "\n" .join(format_id_name_list))
 
 
-def generate_id() -> str:
+def generate_id(name) -> str:
   """Generate a new player ID wich isn't already used"""
   with open("id_list.numcraft","r") as id_list_file:
-    id_list = ["id0"] + id_list_file.readline().split(" ")
+    id_name_list = ["id0=name0"] + id_list_file.readline().split(" ")
+    id_list = list(id_name.split("=")[0] for id_name in id_name_list)
   with open("id_list.numcraft","w") as id_list_file:
     player_id = "id0"
     while player_id in id_list:
       player_id = list_to_str(list(random.choice(["a","b","c","d","e","f"])
         for i in range(8)))
-    id_list += [player_id]
+    id_name_list += ["%s=%s" % (player_id,name)]
     print(id_list)
-    id_list_file.write(" " .join(id_list[1:]))
+    id_list_file.write(" " .join(id_name_list[1:]))
   return player_id
 
 def validate_player(name) -> str:
   """Validate a name and return an ID"""
+  unwanted = " ", "="
   for character in name:
-    if character == ' ':
-      raise PlayerError("No spaces in player name")
-  player_id = generate_id()
+    if character in unwanted:
+      raise PlayerError('No spaces or "=" in player name')
+  player_id = generate_id(name)
   return player_id
 
 
@@ -219,6 +233,7 @@ def mainloop():
     "credits": Indication.credits,
     "inv": Player.get_inventory,
     "player": Indication.player_infos,
+    "players": Indication.players_list,
   }
   
   ressources = {
