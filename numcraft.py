@@ -76,7 +76,6 @@ class Player:
     self.id = id
     self.current_dimension = 0
     self.y_level = "mine"
-
     self.inventory = {
       "minerals": {"diamond": [0, 1],
                    "iron": [0, 2],
@@ -128,6 +127,27 @@ class Commands:
     player.inventory["minerals"]["stone"][0] = 42042
 
     return "Inventory fulled"
+
+  def save(player,ressources) -> str:
+    """
+    save current player
+    File reading:
+    line1 - player.name
+    line2 - player.id
+    line3 - player.current_dimension
+    line4 - player.y_level
+    line5 - player.inventory
+    line6 - player.enchantments
+    """
+    with open("%s.save.numcraft" % (player.id),"w") as save_file:
+      data = [player.name, 
+              player.id,
+              player.current_dimension,
+              player.y_level,
+              player.inventory,
+              player.enchantments,]
+      save_file.write("\n" .join(list(str(element) for element in data)))
+    return "Succesfuly saved %s" % (player.name)
 
 
 class Indication:
@@ -201,7 +221,6 @@ def validate_player(name) -> str:
   player_id = generate_id(name)
   return player_id
 
-
 def generate_ore(player,y_levels):
   if player.current_dimension == 0:
     if player.y_level == "mine":
@@ -226,6 +245,7 @@ def mainloop():
     "ench": Commands.ench,
     "quit": Commands.quit,
     "god": Commands.god,
+    "save": Commands.save,
   }
 
   indications = {
