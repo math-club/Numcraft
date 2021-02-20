@@ -25,7 +25,6 @@ __author__ = [
 ]
 
 
-from os import POSIX_FADV_NORMAL, read
 import random
 
 
@@ -176,7 +175,7 @@ class Indication:
     return "\t" + random.choice(splash_text)
 
   def help(player) -> str:
-    """show this message"""
+    """show help for commands"""
     return ("%s %s %s\n\n" % (game_name,__version__, update_name) +
             "\n".join("%s - %s" % ("todo", "todo")))
 
