@@ -304,6 +304,11 @@ def mainloop():
 
   player_defined = 0
 
+  try:
+    open("id_list.numcraft","r").close()
+  except FileNotFoundError:
+    open("id_list.numcraft","w").close()
+
   print(Indication.intro())
   print(Indication.quotes() + "\n")
 
