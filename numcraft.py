@@ -112,7 +112,7 @@ class Player:
 
 class Commands:
 
-  def ench(player,ressources) -> str:
+  def ench(player, ressources) -> str:
     """Randomly choose an enchantment to apply
       Cost 10 diamonds
       If the enchantment is already applied, it takes 1 diamond anyway"""
@@ -131,11 +131,11 @@ class Commands:
       return ("Sorry, %s already own!\n" % rand_ench
               + "Maybe you'll get another next time!")
 
-  def quit(player,ressources) -> str:
+  def quit(player, ressources) -> str:
     """leave game"""
     raise Quit("Thanks for playing, %s." % (player.name))
 
-  def god(player,ressources) -> str:
+  def god(player, ressources) -> str:
     """give the player enough minerals"""
     player.inventory["minerals"]["diamond"][0] = 42042
     player.inventory["minerals"]["iron"][0] = 42042
@@ -143,7 +143,7 @@ class Commands:
 
     return "Inventory fulled"
 
-  def save(player,ressources) -> str:
+  def save(player, ressources) -> str:
     """
     save current player
     File reading:
@@ -161,6 +161,25 @@ class Commands:
               player.enchantments,]
       save_file.write("\n" .join(list(str(element) for element in data)))
     return "Succesfuly saved %s" % (player.name)
+
+  def move_up(player, ressources) -> str:
+    """Move the player 1 y_level up"""
+    current = ressources["y_levels"][player.y_level][2]
+    try:
+      player.y_level = ressources["y_levels_list"][current + 1]
+    except IndexError:
+      return "%s can't dig up more!" % (player.name)
+    return "%s dig up to %s!" % (player.name, player.y_level)
+
+  def move_down(player, ressources) -> str:
+    """Move the player 1 y_level down"""
+    current = ressources["y_levels"][player.y_level][2]
+    try:
+      player.y_level = ressources["y_levels_list"][current - 1]
+    except IndexError:
+      return "%s can't dig down more!" % (player.name)
+    return "%s dig down to %s!" % (player.name, player.y_level)
+
 
 
 class Indication:
@@ -257,23 +276,17 @@ def read_save(player_id) -> Player:
     player.enchantments = eval(save_file.readline().rstrip("\n"))
   return player
 
-def generate_ore(player,y_levels):
+def generate_ore(player,ressources):
   if player.current_dimension == 0:
-    if player.y_level == "mine":
-      weight = y_levels[player.y_level]
-      ore,values = weight_choice(list(
-        (ore,values) for ore,values in player.inventory["minerals"].items()),
-          weight)
-      nb = values[1]
-      if "fortune" in player.enchantments:
-        nb *= weight_choice([2,3,4],[60,30,10])
-    if player.y_level == "surface":
-      weight = y_levels[player.y_level]
-      ore,values = weight_choice(list(
-        (ore,values) for ore,values in player.inventory["minerals"].items()),
-          weight)
-      nb = values[1]
-  return ore,nb
+    weight = ressources["y_levels"][player.y_level][0]
+    category = ressources["y_levels"][player.y_level][1]
+    ore,values = weight_choice(list(
+      (ore,values) for ore,values in player.inventory[category].items()),
+        weight)
+    nb = values[1]
+    if "fortune" in player.enchantments:
+      nb *= weight_choice([2,3,4],[60,30,10])
+  return ore, nb, category
 
 
 def mainloop():
@@ -282,6 +295,7 @@ def mainloop():
     "quit": Commands.quit,
     "god": Commands.god,
     "save": Commands.save,
+    "movup": Commands.move_up,
   }
 
   indications = {
@@ -291,16 +305,17 @@ def mainloop():
     "player": Indication.player_infos,
     "players": Indication.players_list,
   }
-  
+
   ressources = {
-    "enchantment": {"fortune",}
+    "enchantment": {"fortune",},
+    "y_levels": {"surface": ((20,80),"surface_ressources",2),
+                 "caves": ((1,15,84),"minerals",1),
+                 "mine": ((1,10,89),"minerals",0),},
+    "y_levels_list": ("mine",
+                      "caves",
+                      "surface")
   }
 
-  y_levels = {
-    "surface": [20,80],
-    "caves": [1,15,84],
-    "mine": [1,10,89]
-  }
 
   player_defined = 0
 
@@ -355,8 +370,8 @@ def mainloop():
     elif cmd in indications:
       print(indications[cmd](player))
     else:
-      ore, nb = generate_ore(player,y_levels)
-      player.inventory["minerals"][ore][0] += nb
+      ore, nb, category = generate_ore(player,ressources)
+      player.inventory[category][ore][0] += nb
 
       print(capitalize(ore) + "!")
 
