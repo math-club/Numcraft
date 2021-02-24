@@ -8,7 +8,7 @@ NumCraft is a Python mining game for Numworks
 
 ### Required
 
-- Numworks N110
+- Numworks N110 (won't work with new versions due to memory limitations)
 - Or anything that run Python3
 
 ### Installation
