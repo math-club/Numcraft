@@ -101,8 +101,11 @@ class Player:
     self.enchantments = []
 
   def get_inventory(self) -> str:
-    return "\n".join("%s: %s" % (capitalize(ore), nb[0])
-                     for ore, nb in self.inventory["minerals"].items())
+    inventory_string = "%s Inventory" % (self.name)
+    for category in self.inventory.items():
+      inventory_string += ("%s" % (capitalize(category)) +
+                     ("\n".join("%s: %s" % (capitalize(ore), nb[0])
+                     for ore, nb in self.inventory[category].items())))
 
   def add_enchantments(self, enchants:list):
     for i in enchants:
@@ -179,7 +182,6 @@ class Commands:
     except IndexError:
       return "%s can't dig down more!" % (player.name)
     return "%s dig down to %s!" % (player.name, player.y_level)
-
 
 
 class Indication:
@@ -296,6 +298,7 @@ def mainloop():
     "god": Commands.god,
     "save": Commands.save,
     "movup": Commands.move_up,
+    "movdwn": Commands.move_down,
   }
 
   indications = {
