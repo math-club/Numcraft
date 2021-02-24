@@ -24,17 +24,13 @@ Launch the main python file using python3
 ## Launch
 
 Just launch the main file
+    python3 numcraft.py
 
 ## Coded with
 
+* [Visual Studio Code](code.visualstudio.com) - IDE
 * [Geany](http://geany.org) - IDE
 * [Omega IDE](http://getomega.dev/ide) - IDE for Numworks
-
-## Versions
-
-Latest: **In dev** 0.x
-
-Versions: [Click to show](https://github.com/club-de-maths/Numcraft/tags)
 
 ## Authors
 
