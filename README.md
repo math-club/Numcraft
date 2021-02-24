@@ -38,14 +38,14 @@ Versions: [Click to show](https://github.com/club-de-maths/Numcraft/tags)
 
 ## Authors
 
-- Developers
+Developers
 * **Nathan Duranel** _alias_ [@the-zmaze](https://github.com/The-ZmaZe)
 * **Timéo Arnouts** _alias_ [@tim-ats-d](https://github.com/Tim-ats-d)
 
-- Game designers
+Game designers
 * **Paul Boëté**
 
-- Beta-Testers
+Beta-Testers
 * **Nils Collomb** _alias_ .[@sparayack](https://github.com/Sparayack)
 * **Paul Boëté**
 
