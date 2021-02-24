@@ -46,7 +46,7 @@ Game designers
 * **Paul Boëté**
 
 Beta-Testers
-* **Nils Collomb** _alias_ .[@sparayack](https://github.com/Sparayack)
+* **Nils Collomb** _alias_ [@sparayack](https://github.com/Sparayack)
 * **Paul Boëté**
 
 [Contributors](https://github.com/club-de-math/Numcraft/contributors)
