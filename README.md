@@ -4,7 +4,7 @@
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](http://forthebadge.com)
 
-NumCraft is a Python mining game for Numworks
+NumCraft is a Python mining game, originally developped for Numworks
 
 ### Required
 
@@ -13,13 +13,9 @@ NumCraft is a Python mining game for Numworks
 
 ### Installation
 
-Copy each .py files in your scripts on numworks.com
-Then add it to your device
+* NumWorks: Copy each .py files in your scripts on numworks.com, then add it to your device
 
-Or if you wan't to try it on PC because PC Master Race:
-Launch the main python file using python3
-
-(Not sure you'll not be /ban forever if you run it on Microsoft Windows)
+* PC: Launch the main python file using python3
 
 ## Launch
 
