@@ -24,7 +24,7 @@ Launch the main python file using python3
 ## Launch
 
 Just launch the main file
-    python3 numcraft.py
+    `python3 numcraft.py`
 
 ## Coded with
 
