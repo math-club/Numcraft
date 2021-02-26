@@ -1,5 +1,5 @@
 
-#### NumCraft
+# NumCraft
 [![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](http://forthebadge.com)
 
 NumCraft is a Python mining game
