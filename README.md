@@ -12,7 +12,7 @@ NumCraft is a Python mining game
 ## Launch
 
 Just launch the main file
-    `python3 numcraft.py`
+    `python3 main.py`
 
 ## Coded with
 
