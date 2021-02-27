@@ -38,6 +38,7 @@ def mainloop():
     commands = {
         "ench": numcraft.Commands.ench,
         "quit": numcraft.Commands.quit,
+        "savquit": numcraft.Commands.save_quit,
         "god": numcraft.Commands.god,
         "save": numcraft.Commands.save,
         "movup": numcraft.Commands.move_up,
@@ -54,7 +55,7 @@ def mainloop():
 
     ressources = {
         "enchantment": {"fortune", },
-        "y_levels": {"surface": ((20, 80), "surface_ressources", 2),
+        "y_levels": {"surface": ((20, 80), "surface ressources", 2),
                      "caves": ((1, 15, 84), "minerals", 1),
                      "mine": ((1, 10, 89), "minerals", 0), },
         "y_levels_list": ("mine",
@@ -111,15 +112,22 @@ def mainloop():
     while 1:
         cmd = input("> ").strip()
 
-        if cmd in commands:
-            print(commands[cmd](player, ressources))
-        elif cmd in indications:
-            print(indications[cmd](player))
-        else:
+        if cmd == '':
             ore, nb, category = numcraft.generate_ore(player, ressources)
             player.inventory[category][ore][0] += nb
-
             print(ore.capitalize() + "!")
+
+        elif cmd in commands:
+            try:
+                print(commands[cmd](player, ressources))
+            except numcraft.Quit as quit:
+                print(quit)
+                break
+        elif cmd in indications:
+            print(indications[cmd](player))
+
+        else:
+            print("%s is not a valid command" % cmd)
 
 
 mainloop()

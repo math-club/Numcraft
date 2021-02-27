@@ -30,6 +30,14 @@ help_docs = [("help","show help for commands"),
 
 #- CLASS -#
 
+class GUIEffect:
+    """GUI effect"""
+    pass
+
+class TerminalEffect(GUIEffect):
+    """Terminal print"""
+    pass
+
 class Quit(Exception):
     """Raised to quit NumCraft"""
     def __init__(self, message: str):
@@ -63,17 +71,20 @@ class Player:
             "minerals": {"diamond": [0, 1],
                          "iron": [0, 2],
                          "stone": [0, 1]},
-            "surface_ressources": {"wood": [0,1],
+            "surface ressources": {"wood": [0,1],
                                    "dirt": [0,1]}
         }
         self.enchantments = []
 
     def get_inventory(self) -> str:
         inventory_string = "%s Inventory" % (self.name)
-        for category in self.inventory.items():
-            inventory_string += ("%s" % (category.capitalize()) +
-                ("\n".join("%s: %s" % (ore.capitalize(), nb[0])
-                    for ore, nb in self.inventory[category].items())))
+        for category in self.inventory.keys():
+            items_list = tuple((ore.capitalize(),value[0]) 
+                for ore,value in self.inventory[category].items())
+            inventory_string += ("\n\n\t%s\n\t" % (category.capitalize()) +
+                ("\n\t".join(tuple("%s: %s" % (ore,value)
+                    for ore,value in items_list))))
+        return inventory_string
 
     def add_enchantments(self, enchants:list):
         for enchantment in enchants:
@@ -102,16 +113,23 @@ class Commands:
             return ("Sorry, %s already own!\n" % rand_ench
                             + "Maybe you'll get another next time!")
 
-    def quit(player, ressources) -> str:
+    def save_quit(player, ressources) -> TerminalEffect:
+        """leave game"""
+        print(Commands.save())
+        raise Quit("Thanks for playing, %s." % (player.name))
+
+    def quit(player, ressources) -> Quit:
         """leave game"""
         raise Quit("Thanks for playing, %s." % (player.name))
 
     def god(player, ressources) -> str:
         """give the player enough minerals"""
-        player.inventory["minerals"]["diamond"][0] = 42042
-        player.inventory["minerals"]["iron"][0] = 42042
-        player.inventory["minerals"]["stone"][0] = 42042
-
+        categories = player.inventory.keys()
+        print(categories)
+        for category in categories:
+            print(category)
+            for element in player.inventory[category].keys():
+                player.inventory[category][element][0] = 42042
         return "Inventory fulled"
 
     def save(player, ressources) -> str:
